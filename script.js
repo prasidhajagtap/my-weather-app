@@ -4,6 +4,39 @@ const cityInput = document.getElementById('city-input');
 const errorMsg = document.getElementById('error-msg');
 const weatherDisplay = document.getElementById('weather-display');
 
+async function fetchWeather(city) {
+    try {
+        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`);
+        if (!response.ok) throw new Error('City not found');
+        const data = await response.json();
+        
+        updateUI(data);
+        updateBackground(data.current.condition.text.toLowerCase());
+        
+    } catch (error) {
+        alert("City not found. Try again!");
+    }
+}
+
+function updateUI(data) {
+    document.getElementById('temp').innerText = `${Math.round(data.current.temp_c)}°C`;
+    document.getElementById('condition').innerText = data.current.condition.text;
+    document.getElementById('humidity').innerText = `${data.current.humidity}%`;
+    document.getElementById('wind').innerText = `${data.current.wind_kph} km/h`;
+    weatherDisplay.classList.remove('d-none');
+}
+
+function updateBackground(condition) {
+    const body = document.body;
+    body.className = ''; // Reset classes
+    
+    if (condition.includes('sun')) body.classList.add('sunny');
+    else if (condition.includes('rain') || condition.includes('drizzle')) body.classList.add('rainy');
+    else if (condition.includes('cloud') || condition.includes('overcast')) body.classList.add('cloudy');
+    else if (condition.includes('clear')) body.classList.add('clear');
+    else body.style.background = "var(--bg-gradient)";
+}
+
 searchBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     
