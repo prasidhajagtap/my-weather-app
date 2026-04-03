@@ -1,1 +1,19 @@
-style.css
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Subtle focus effect for the input */
+.form-control:focus {
+    box-shadow: none;
+    background-color: #e9ecef;
+}
+
+/* Transitions for showing weather data */
+#weather-display {
+    transition: opacity 0.5s ease-in-out;
+}
+
+.rounded-4 {
+    border-radius: 1.5rem !important;
+}
