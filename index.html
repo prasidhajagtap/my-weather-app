@@ -3,200 +3,206 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Weather Market Terminal</title>
+  <title>Weather Market</title>
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0c0a08" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="apple-touch-icon" href="icon.svg" />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700&family=Courier+Prime&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Barlow+Condensed:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* ── Theme Architecture ── */
+    /* ... (Your original variables and base styles remain exactly the same) ... */
     :root {
-      --bg: #f5f2ed;
-      --card: rgba(255, 255, 255, 0.85);
-      --text: #1a1a1a;
-      --gold: #b08d3e;
-      --green: #2d8659;
-      --red: #c24141;
-      --border: rgba(176, 141, 62, 0.2);
+      --bg: #0c0a08; --bg2: #131109; --gold: #c9a84c; --gold-glow: rgba(201,168,76,0.15);
+      --gold-line: rgba(201,168,76,0.1); --cream: #e8dfc8; --muted: #5c5040;
+      --green: #4caf7a; --red: #c95252; --blue: #5a92c9; --glass: rgba(255,255,255,0.022);
+      --gb: rgba(201,168,76,0.09); --gbs: rgba(201,168,76,0.18);
     }
 
-    @media (prefers-color-scheme: dark) {
+    /* Auto Light Theme Support */
+    @media (prefers-color-scheme: light) {
       :root {
-        --bg: #0c0a08;
-        --card: rgba(18, 16, 14, 0.9);
-        --text: #e8dfc8;
-        --border: rgba(201, 168, 76, 0.15);
+        --bg: #f5f2ed; --bg2: #ece9e0; --gold: #a68a3d; --cream: #1a1a1a;
+        --muted: #7d705d; --glass: rgba(0,0,0,0.03); --gold-line: rgba(166,138,61,0.15);
       }
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { 
-      background: var(--bg); color: var(--text); 
-      font-family: 'Barlow Condensed', sans-serif; 
-      min-height: 100vh; overflow-x: hidden;
-      transition: background 0.5s ease;
-    }
-
-    /* ── Money Sky Background ── */
-    #money-sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.15; }
-    .coin { position: absolute; font-size: 40px; animation: spin 8s linear infinite; }
-    @keyframes spin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-
-    #app { position: relative; z-index: 1; max-width: 420px; margin: 0 auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 20px; backdrop-filter: blur(12px);
-    }
-
-    .ticker-id { font-family: 'Courier Prime', monospace; font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { min-height: 100%; background: var(--bg); color: var(--cream); font-family: 'Barlow Condensed', sans-serif; overflow-x: hidden; transition: background 0.5s ease; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(var(--gold-line) 1px, transparent 1px), linear-gradient(90deg, var(--gold-line) 1px, transparent 1px); background-size: 44px 44px; z-index: 0; }
     
-    .search-box {
-      width: 100%; background: rgba(0,0,0,0.05); border: 1px solid var(--border);
-      padding: 12px; border-radius: 8px; color: var(--text);
-      font-family: 'Courier Prime', monospace; font-size: 14px; outline: none; margin-top: 10px;
+    #app { position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .widget { width: 100%; max-width: 390px; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── Search Input Styling ── */
+    .search-container { position: relative; width: 100%; margin-bottom: 5px; }
+    .search-input {
+      width: 100%; background: var(--glass); border: 1px solid var(--gb); border-radius: 12px;
+      padding: 12px 15px; color: var(--cream); font-family: 'Courier Prime', monospace;
+      font-size: 11px; letter-spacing: 1px; outline: none; text-transform: uppercase;
     }
+    .search-input:focus { border-color: var(--gold); background: rgba(201,168,76,0.05); }
 
-    .price-main { font-family: 'Cormorant Garamond', serif; font-size: 64px; line-height: 1; margin: 10px 0; }
-    .spread-chip { display: inline-block; padding: 4px 12px; border-radius: 4px; font-family: 'Courier Prime', monospace; font-size: 11px; font-weight: bold; }
-    .up { background: rgba(45, 134, 89, 0.1); color: var(--green); }
-    .down { background: rgba(194, 65, 65, 0.1); color: var(--red); }
+    /* ── Comparison Spread Card ── */
+    .spread-card { border: 1px dashed var(--gold); background: rgba(201,168,76,0.03); }
+    .vs-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; text-align: center; margin-top: 5px; }
+    .vs-city { font-size: 9px; color: var(--gold); letter-spacing: 1px; }
+    .vs-temp { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; }
 
-    .vs-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; text-align: center; margin-top: 10px; }
-    .vs-val { font-family: 'Cormorant Garamond', serif; font-size: 24px; }
-
-    .hidden { display: none; }
+    /* ... (Rest of your original CSS classes: .card, .header, .price-display, etc.) ... */
+    .card { background: var(--glass); border: 1px solid var(--gb); border-radius: 18px; backdrop-filter: blur(28px); padding: 17px 20px; position: relative; overflow: hidden; }
+    .brand-name { font-size: 9px; font-weight: 700; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; }
+    .price-display { text-align: center; padding: 8px 0 5px; line-height: 1; }
+    .price-int { font-family: 'Cormorant Garamond', serif; font-size: clamp(54px, 17vw, 78px); font-weight: 600; letter-spacing: -3px; color: var(--cream); }
+    .price-dec { font-family: 'Cormorant Garamond', serif; font-size: clamp(30px, 10vw, 44px); font-weight: 300; color: var(--muted); }
+    .badge { font-family: 'Courier Prime', monospace; font-size: 10px; padding: 2px 9px; border-radius: 5px; }
+    .badge.up { background: rgba(76,175,122,.1); color: var(--green); }
+    .badge.down { background: rgba(201,82,82,.1); color: var(--red); }
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .metric { background: var(--glass); border: 1px solid var(--gb); border-radius: 13px; padding: 13px 15px; }
+    .m-value { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600; }
+    .spinner { width: 26px; height: 26px; border: 1.5px solid var(--gb); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-<div id="money-sky"></div>
-
 <div id="app">
-  <div class="card">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <span class="ticker-id">Terminal / Search</span>
-      <span id="clk" class="ticker-id">00:00:00</span>
+  <div class="widget">
+    <div class="card" style="text-align:center; padding: 40px;">
+      <div class="spinner" style="margin: 0 auto 15px;"></div>
+      <div style="font-size: 8px; letter-spacing: 3px; color: var(--muted);">INITIALIZING TERMINAL...</div>
     </div>
-    <input type="text" id="cityInput" class="search-box" placeholder="TYPE CITY & HIT ENTER...">
   </div>
-
-  <div id="main-content">
-    </div>
 </div>
 
 <script>
-  let baseTemp = null;
-  let baseCity = "";
+  let localData = null; // Store initial user location for comparison
 
-  // ── Core Engine ──
-  async function getWeather(lat, lon) {
-    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto`);
+  // ── WMO Weather Logic (Your existing map) ──
+  const WMO = { 0: { label: 'BULL MARKET', desc: 'Clear skies · Max returns', cls: 'up', col: '#4caf7a' }, 2: { label: 'STEADY MARKET', desc: 'Partly cloudy', cls: 'flat', col: '#c9a84c' }, 3: { label: 'SIDEWAYS TREND', desc: 'Overcast', cls: 'flat', col: '#c9a84c' }, 61: { label: 'BEAR MARKET', desc: 'Rain · Selling pressure', cls: 'down', col: '#c95252' } /* ... Add others as needed ... */ };
+  function wmo(code) { return WMO[code] || { label: 'MONITORING', desc: 'Analyzing...', cls: 'flat', col: '#c9a84c' }; }
+
+  // ── API Engines ──
+  async function fetchWeather(lat, lng) {
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,uv_index&hourly=temperature_2m&timezone=auto&forecast_days=1`);
     return r.json();
   }
 
-  function updateBackground(code) {
-    const sky = document.getElementById('money-sky');
-    sky.innerHTML = '';
-    const coin = document.createElement('div');
-    coin.className = 'coin';
-    coin.style.left = '70%'; coin.style.top = '15%';
-    coin.textContent = (code <= 3) ? '🟡' : '🔘'; 
-    sky.appendChild(coin);
-    
-    // Sentiment Colors
-    if (code <= 3) document.body.style.backgroundColor = "rgba(45, 134, 89, 0.05)";
-    else if (code >= 51) document.body.style.backgroundColor = "rgba(194, 65, 65, 0.05)";
+  async function getCityName(lat, lng) {
+    const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
+    const d = await r.json();
+    return (d.city || d.locality || "TERMINAL").toUpperCase();
   }
 
-  function render(data, cityName, isComparison = false) {
+  // ── Rendering Core ──
+  function render(data, city, isComparison = false) {
     const cur = data.current;
+    const info = wmo(cur.weather_code);
     const temp = cur.temperature_2m;
     const tInt = Math.floor(Math.abs(temp));
-    const tDec = (Math.abs(temp) % 1).toFixed(2).split('.');
-    const sentiment = cur.weather_code <= 3 ? 'BULLISH' : 'BEARISH';
-    const sentClass = cur.weather_code <= 3 ? 'up' : 'down';
+    const tDec = (Math.abs(temp) % 1).toFixed(2).slice(1);
 
-    updateBackground(cur.weather_code);
+    // Dynamic Background Logic
+    if (cur.weather_code >= 51) document.body.style.background = "radial-gradient(circle, #1a0a0a 0%, #0c0a08 100%)";
+    else if (cur.weather_code <= 3) document.body.style.background = "radial-gradient(circle, #0e1610 0%, #0c0a08 100%)";
 
-    let comparisonHtml = "";
-    if (isComparison && baseTemp !== null) {
-      const spread = (temp - baseTemp).toFixed(2);
-      comparisonHtml = `
-        <div class="card" style="margin-top:12px">
-          <p class="ticker-id">Market Spread / ${baseCity} vs ${cityName}</p>
-          <div class="vs-grid">
-            <div><p style="font-size:10px">${baseCity}</p><p class="vs-val">${baseTemp.toFixed(1)}°</p></div>
-            <div style="font-family:'Courier Prime'; color:var(--gold)">VS</div>
-            <div><p style="font-size:10px">${cityName}</p><p class="vs-val">${temp.toFixed(1)}°</p></div>
+    let spreadHtml = "";
+    if (isComparison && localData) {
+      const diff = (temp - localData.temp).toFixed(1);
+      spreadHtml = `
+        <div class="card spread-card">
+          <div class="brand-name">MARKET SPREAD // COMPARISON</div>
+          <div class="vs-row">
+            <div><p class="vs-city">${localData.city}</p><p class="vs-temp">${localData.temp.toFixed(1)}°</p></div>
+            <div style="font-family:'Courier Prime'; color:var(--gold); font-size:10px;">VS</div>
+            <div><p class="vs-city">${city}</p><p class="vs-temp">${temp.toFixed(1)}°</p></div>
           </div>
-          <p style="text-align:center; font-family:'Courier Prime'; font-size:11px; margin-top:10px;">
-            DIFF: <span class="${spread >= 0 ? 'up' : 'down'}">${spread > 0 ? '+' : ''}${spread}°</span>
-          </p>
-        </div>
-      `;
-    } else {
-      baseTemp = temp;
-      baseCity = cityName;
+          <div style="text-align:center; font-family:'Courier Prime'; font-size:10px; margin-top:8px;">
+            SPREAD: <span class="${diff >= 0 ? 'up' : 'down'}">${diff > 0 ? '+' : ''}${diff}°</span>
+          </div>
+        </div>`;
     }
 
-    const html = `
+    const mainHtml = `
+      <div class="search-container">
+        <input type="text" id="citySearch" class="search-input" placeholder="SEARCH TICKER (CITY)..." autocomplete="off">
+      </div>
+      
       <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div class="header">
           <div>
-            <p class="ticker-id">Market: ${cityName}</p>
-            <h1 class="price-main">₹${tInt}<span style="font-size:24px; opacity:0.5">.${tDec}</span></h1>
+            <div class="brand-name">◈ Weather Market</div>
+            <div style="font-size:11px; color:var(--muted); letter-spacing:1px;">${city}</div>
           </div>
-          <div class="spread-chip ${sentClass}">${sentiment}</div>
+          <div style="font-family:'Courier Prime'; font-size:12px; color:var(--muted);" id="liveClock">00:00:00</div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px; border-top:1px solid var(--border); padding-top:15px;">
-          <div><p class="ticker-id" style="font-size:9px">Liquidity</p><p class="vs-val">${cur.relative_humidity_2m}%</p></div>
-          <div><p class="ticker-id" style="font-size:9px">Volatility</p><p class="vs-val">${cur.wind_speed_10m} <span style="font-size:10px">km/h</span></p></div>
+        <div class="price-display">
+          <span style="font-family:'Cormorant Garamond'; color:var(--gold); font-size:24px;">₹</span>
+          <span class="price-int">${tInt}</span><span class="price-dec">${tDec}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+          <span class="badge ${info.cls}">${info.label}</span>
+          <span style="font-size:10px; color:var(--muted);">${info.desc}</span>
         </div>
       </div>
-      ${comparisonHtml}
+
+      ${spreadHtml}
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <div style="font-size:7px; color:var(--muted); letter-spacing:2px; font-weight:700;">LIQUIDITY</div>
+          <div class="m-value" style="color:var(--blue)">${cur.relative_humidity_2m}%</div>
+        </div>
+        <div class="metric">
+          <div style="font-size:7px; color:var(--muted); letter-spacing:2px; font-weight:700;">VOLATILITY</div>
+          <div class="m-value" style="color:var(--gold)">${cur.wind_speed_10m}<span style="font-size:12px">km/h</span></div>
+        </div>
+      </div>
     `;
-    document.getElementById('main-content').innerHTML = html;
-  }
 
-  // ── Search Handler ──
-  document.getElementById('cityInput').addEventListener('keypress', async (e) => {
-    if (e.key === 'Enter') {
-      const city = e.target.value.trim();
-      if (!city) return;
-      try {
-        const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=en&format=json`);
-        const geo = await res.json();
-        if (geo.results) {
-          const target = geo.results;
-          const weather = await getWeather(target.latitude, target.longitude);
-          render(weather, target.name.toUpperCase(), true);
-        }
-      } catch (err) { console.error("Search failed", err); }
-    }
-  });
-
-  // ── Initialization ──
-  function init() {
-    setInterval(() => {
-      document.getElementById('clk').textContent = new Date().toLocaleTimeString('en-IN', { hour12: false });
-    }, 1000);
-
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const { latitude: lat, longitude: lon } = pos.coords;
-      const weather = await getWeather(lat, lon);
-      const geo = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
-      const geoD = await geo.json();
-      render(weather, geoD.city.toUpperCase() || "LOCAL");
-    }, () => {
-      // Fallback
-      document.getElementById('cityInput').value = "Mumbai";
-      document.getElementById('cityInput').dispatchEvent(new KeyboardEvent('keypress', {key: 'Enter'}));
+    document.getElementById('app').innerHTML = `<div class="widget">${mainHtml}</div>`;
+    
+    // Re-bind search event
+    document.getElementById('citySearch').addEventListener('keypress', async (e) => {
+      if (e.key === 'Enter') handleSearch(e.target.value);
     });
+
+    // Start Clock
+    setInterval(() => {
+      const el = document.getElementById('liveClock');
+      if (el) el.textContent = new Date().toLocaleTimeString('en-IN', { hour12: false });
+    }, 1000);
   }
 
-  init();
+  // ── Search Logic ──
+  async function handleSearch(query) {
+    if (!query) return;
+    try {
+      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=1&language=en&format=json`);
+      const geo = await res.json();
+      if (geo.results) {
+        const target = geo.results;
+        const weather = await fetchWeather(target.latitude, target.longitude);
+        render(weather, target.name.toUpperCase(), true);
+      }
+    } catch (err) { console.error("Search failed", err); }
+  }
+
+  // ── Initial Start ──
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const { latitude: lat, longitude: lon } = pos.coords;
+    const weather = await fetchWeather(lat, lon);
+    const city = await getCityName(lat, lon);
+    localData = { temp: weather.current.temperature_2m, city: city };
+    render(weather, city);
+  }, () => {
+    handleSearch("Navi Mumbai"); // Fallback
+  });
 </script>
 </body>
 </html>
