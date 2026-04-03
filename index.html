@@ -15,15 +15,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Barlow+Condensed:wght@300;400;500;600;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* ... (Your original variables and base styles remain exactly the same) ... */
     :root {
       --bg: #0c0a08; --bg2: #131109; --gold: #c9a84c; --gold-glow: rgba(201,168,76,0.15);
       --gold-line: rgba(201,168,76,0.1); --cream: #e8dfc8; --muted: #5c5040;
       --green: #4caf7a; --red: #c95252; --blue: #5a92c9; --glass: rgba(255,255,255,0.022);
-      --gb: rgba(201,168,76,0.09); --gbs: rgba(201,168,76,0.18);
+      --gb: rgba(201,168,76,0.09);
     }
 
-    /* Auto Light Theme Support */
     @media (prefers-color-scheme: light) {
       :root {
         --bg: #f5f2ed; --bg2: #ece9e0; --gold: #a68a3d; --cream: #1a1a1a;
@@ -32,40 +30,33 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { min-height: 100%; background: var(--bg); color: var(--cream); font-family: 'Barlow Condensed', sans-serif; overflow-x: hidden; transition: background 0.5s ease; }
-    body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(var(--gold-line) 1px, transparent 1px), linear-gradient(90deg, var(--gold-line) 1px, transparent 1px); background-size: 44px 44px; z-index: 0; }
+    body { min-height: 100vh; background: var(--bg); color: var(--cream); font-family: 'Barlow Condensed', sans-serif; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(var(--gold-line) 1px, transparent 1px), linear-gradient(90deg, var(--gold-line) 1px, transparent 1px); background-size: 44px 44px; z-index: 0; pointer-events: none; }
     
     #app { position: relative; z-index: 1; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
     .widget { width: 100%; max-width: 390px; display: flex; flex-direction: column; gap: 10px; }
 
-    /* ── Search Input Styling ── */
-    .search-container { position: relative; width: 100%; margin-bottom: 5px; }
+    .search-container { position: relative; width: 100%; }
     .search-input {
       width: 100%; background: var(--glass); border: 1px solid var(--gb); border-radius: 12px;
       padding: 12px 15px; color: var(--cream); font-family: 'Courier Prime', monospace;
       font-size: 11px; letter-spacing: 1px; outline: none; text-transform: uppercase;
+      backdrop-filter: blur(10px);
     }
-    .search-input:focus { border-color: var(--gold); background: rgba(201,168,76,0.05); }
 
-    /* ── Comparison Spread Card ── */
-    .spread-card { border: 1px dashed var(--gold); background: rgba(201,168,76,0.03); }
-    .vs-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; text-align: center; margin-top: 5px; }
-    .vs-city { font-size: 9px; color: var(--gold); letter-spacing: 1px; }
-    .vs-temp { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; }
-
-    /* ... (Rest of your original CSS classes: .card, .header, .price-display, etc.) ... */
     .card { background: var(--glass); border: 1px solid var(--gb); border-radius: 18px; backdrop-filter: blur(28px); padding: 17px 20px; position: relative; overflow: hidden; }
-    .brand-name { font-size: 9px; font-weight: 700; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; }
-    .price-display { text-align: center; padding: 8px 0 5px; line-height: 1; }
+    .brand-name { font-size: 9px; font-weight: 700; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
     .price-int { font-family: 'Cormorant Garamond', serif; font-size: clamp(54px, 17vw, 78px); font-weight: 600; letter-spacing: -3px; color: var(--cream); }
     .price-dec { font-family: 'Cormorant Garamond', serif; font-size: clamp(30px, 10vw, 44px); font-weight: 300; color: var(--muted); }
     .badge { font-family: 'Courier Prime', monospace; font-size: 10px; padding: 2px 9px; border-radius: 5px; }
     .badge.up { background: rgba(76,175,122,.1); color: var(--green); }
     .badge.down { background: rgba(201,82,82,.1); color: var(--red); }
-    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .metric { background: var(--glass); border: 1px solid var(--gb); border-radius: 13px; padding: 13px 15px; }
-    .m-value { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600; }
-    .spinner { width: 26px; height: 26px; border: 1.5px solid var(--gb); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
+    
+    .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .metric { background: var(--glass); border: 1px solid var(--gb); border-radius: 14px; padding: 15px; }
+    .m-value { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 600; }
+    
+    .spinner { width: 24px; height: 24px; border: 2px solid var(--gb); border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
@@ -73,79 +64,75 @@
 
 <div id="app">
   <div class="widget">
-    <div class="card" style="text-align:center; padding: 40px;">
-      <div class="spinner" style="margin: 0 auto 15px;"></div>
-      <div style="font-size: 8px; letter-spacing: 3px; color: var(--muted);">INITIALIZING TERMINAL...</div>
+    <div class="card" style="text-align:center; padding: 50px 20px;">
+      <div class="spinner"></div>
+      <div style="font-size: 8px; letter-spacing: 3px; color: var(--gold);">ESTABLISHING CONNECTION...</div>
     </div>
   </div>
 </div>
 
 <script>
-  let localData = null; // Store initial user location for comparison
+  let localData = null;
 
-  // ── WMO Weather Logic (Your existing map) ──
-  const WMO = { 0: { label: 'BULL MARKET', desc: 'Clear skies · Max returns', cls: 'up', col: '#4caf7a' }, 2: { label: 'STEADY MARKET', desc: 'Partly cloudy', cls: 'flat', col: '#c9a84c' }, 3: { label: 'SIDEWAYS TREND', desc: 'Overcast', cls: 'flat', col: '#c9a84c' }, 61: { label: 'BEAR MARKET', desc: 'Rain · Selling pressure', cls: 'down', col: '#c95252' } /* ... Add others as needed ... */ };
-  function wmo(code) { return WMO[code] || { label: 'MONITORING', desc: 'Analyzing...', cls: 'flat', col: '#c9a84c' }; }
+  const WMO = {
+    0: { label: 'BULL MARKET', desc: 'Clear skies · Strong outlook', cls: 'up' },
+    1: { label: 'STEADY MARKET', desc: 'Mainly clear', cls: 'up' },
+    3: { label: 'SIDEWAYS', desc: 'Overcast · Neutral trend', cls: 'flat' },
+    61: { label: 'BEAR MARKET', desc: 'Rain · Selling pressure', cls: 'down' }
+  };
 
-  // ── API Engines ──
+  function getWmo(code) { return WMO[code] || { label: 'MARKET OPEN', desc: 'Trading active', cls: 'flat' }; }
+
   async function fetchWeather(lat, lng) {
-    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,uv_index&hourly=temperature_2m&timezone=auto&forecast_days=1`);
+    if (!lat || !lng) return null;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto`;
+    const r = await fetch(url);
     return r.json();
   }
 
-  async function getCityName(lat, lng) {
-    const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`);
-    const d = await r.json();
-    return (d.city || d.locality || "TERMINAL").toUpperCase();
-  }
-
-  // ── Rendering Core ──
   function render(data, city, isComparison = false) {
+    if (!data) return;
     const cur = data.current;
-    const info = wmo(cur.weather_code);
+    const info = getWmo(cur.weather_code);
     const temp = cur.temperature_2m;
     const tInt = Math.floor(Math.abs(temp));
     const tDec = (Math.abs(temp) % 1).toFixed(2).slice(1);
-
-    // Dynamic Background Logic
-    if (cur.weather_code >= 51) document.body.style.background = "radial-gradient(circle, #1a0a0a 0%, #0c0a08 100%)";
-    else if (cur.weather_code <= 3) document.body.style.background = "radial-gradient(circle, #0e1610 0%, #0c0a08 100%)";
 
     let spreadHtml = "";
     if (isComparison && localData) {
       const diff = (temp - localData.temp).toFixed(1);
       spreadHtml = `
-        <div class="card spread-card">
-          <div class="brand-name">MARKET SPREAD // COMPARISON</div>
-          <div class="vs-row">
-            <div><p class="vs-city">${localData.city}</p><p class="vs-temp">${localData.temp.toFixed(1)}°</p></div>
-            <div style="font-family:'Courier Prime'; color:var(--gold); font-size:10px;">VS</div>
-            <div><p class="vs-city">${city}</p><p class="vs-temp">${temp.toFixed(1)}°</p></div>
+        <div class="card" style="border: 1px dashed var(--gold); background: rgba(201,168,76,0.02);">
+          <div class="brand-name">SPREAD // ${localData.city} vs ${city}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+             <span style="font-size:20px; font-family:'Cormorant Garamond';">${localData.temp.toFixed(1)}°</span>
+             <span style="font-family:'Courier Prime'; color:var(--gold); font-size:10px;">VS</span>
+             <span style="font-size:20px; font-family:'Cormorant Garamond';">${temp.toFixed(1)}°</span>
           </div>
-          <div style="text-align:center; font-family:'Courier Prime'; font-size:10px; margin-top:8px;">
-            SPREAD: <span class="${diff >= 0 ? 'up' : 'down'}">${diff > 0 ? '+' : ''}${diff}°</span>
+          <div style="text-align:center; font-family:'Courier Prime'; font-size:10px; margin-top:10px;">
+            DIFFERENTIAL: <span class="${diff >= 0 ? 'up' : 'down'}">${diff > 0 ? '+' : ''}${diff}°</span>
           </div>
         </div>`;
     }
 
-    const mainHtml = `
+    const html = `
       <div class="search-container">
-        <input type="text" id="citySearch" class="search-input" placeholder="SEARCH TICKER (CITY)..." autocomplete="off">
+        <input type="text" id="citySearch" class="search-input" placeholder="SEARCH CITY TERMINAL..." autocomplete="off">
       </div>
       
       <div class="card">
-        <div class="header">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div>
             <div class="brand-name">◈ Weather Market</div>
             <div style="font-size:11px; color:var(--muted); letter-spacing:1px;">${city}</div>
           </div>
-          <div style="font-family:'Courier Prime'; font-size:12px; color:var(--muted);" id="liveClock">00:00:00</div>
+          <div id="liveClock" style="font-family:'Courier Prime'; font-size:12px; color:var(--muted);">00:00:00</div>
         </div>
-        <div class="price-display">
-          <span style="font-family:'Cormorant Garamond'; color:var(--gold); font-size:24px;">₹</span>
+        <div style="text-align:center; padding:15px 0;">
+          <span style="font-family:'Cormorant Garamond'; color:var(--gold); font-size:28px; vertical-align:top;">₹</span>
           <span class="price-int">${tInt}</span><span class="price-dec">${tDec}</span>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
           <span class="badge ${info.cls}">${info.label}</span>
           <span style="font-size:10px; color:var(--muted);">${info.desc}</span>
         </div>
@@ -155,37 +142,34 @@
 
       <div class="metrics-grid">
         <div class="metric">
-          <div style="font-size:7px; color:var(--muted); letter-spacing:2px; font-weight:700;">LIQUIDITY</div>
+          <div class="brand-name" style="font-size:7px;">LIQUIDITY</div>
           <div class="m-value" style="color:var(--blue)">${cur.relative_humidity_2m}%</div>
         </div>
         <div class="metric">
-          <div style="font-size:7px; color:var(--muted); letter-spacing:2px; font-weight:700;">VOLATILITY</div>
-          <div class="m-value" style="color:var(--gold)">${cur.wind_speed_10m}<span style="font-size:12px">km/h</span></div>
+          <div class="brand-name" style="font-size:7px;">VOLATILITY</div>
+          <div class="m-value" style="color:var(--gold)">${cur.wind_speed_10m}<small style="font-size:12px">km/h</small></div>
         </div>
       </div>
     `;
 
-    document.getElementById('app').innerHTML = `<div class="widget">${mainHtml}</div>`;
+    document.getElementById('app').innerHTML = `<div class="widget">${html}</div>`;
     
-    // Re-bind search event
-    document.getElementById('citySearch').addEventListener('keypress', async (e) => {
+    document.getElementById('citySearch').addEventListener('keypress', e => {
       if (e.key === 'Enter') handleSearch(e.target.value);
     });
 
-    // Start Clock
     setInterval(() => {
       const el = document.getElementById('liveClock');
       if (el) el.textContent = new Date().toLocaleTimeString('en-IN', { hour12: false });
     }, 1000);
   }
 
-  // ── Search Logic ──
   async function handleSearch(query) {
     if (!query) return;
     try {
-      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=1&language=en&format=json`);
+      const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`);
       const geo = await res.json();
-      if (geo.results) {
+      if (geo.results && geo.results) {
         const target = geo.results;
         const weather = await fetchWeather(target.latitude, target.longitude);
         render(weather, target.name.toUpperCase(), true);
@@ -193,16 +177,22 @@
     } catch (err) { console.error("Search failed", err); }
   }
 
-  // ── Initial Start ──
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-    const { latitude: lat, longitude: lon } = pos.coords;
-    const weather = await fetchWeather(lat, lon);
-    const city = await getCityName(lat, lon);
-    localData = { temp: weather.current.temperature_2m, city: city };
-    render(weather, city);
-  }, () => {
-    handleSearch("Navi Mumbai"); // Fallback
-  });
+  async function init() {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude: lat, longitude: lon } = pos.coords;
+      const [weather, geo] = await Promise.all([
+        fetchWeather(lat, lon),
+        fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`).then(r => r.json())
+      ]);
+      const cityName = (geo.city || geo.locality || "LOCAL").toUpperCase();
+      localData = { temp: weather.current.temperature_2m, city: cityName };
+      render(weather, cityName);
+    }, () => {
+      handleSearch("Navi Mumbai");
+    });
+  }
+
+  init();
 </script>
 </body>
 </html>
