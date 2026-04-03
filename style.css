@@ -1,19 +1,52 @@
+:root {
+    --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+}
+
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #f8f9fa;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-gradient);
+    transition: background 1s ease; /* Smooth transition when weather changes */
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Subtle focus effect for the input */
-.form-control:focus {
-    box-shadow: none;
-    background-color: #e9ecef;
+/* Dynamic Weather Backgrounds */
+body.sunny { background: linear-gradient(135deg, #fceabb 0%, #f8b500 100%); }
+body.rainy { background: linear-gradient(135deg, #616161 0%, #9bc5c3 100%); }
+body.cloudy { background: linear-gradient(135deg, #bdc3c7 0%, #2c3e50 100%); }
+body.clear { background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%); }
+
+.weather-card {
+    background: rgba(255, 255, 255, 0.7); /* Semi-transparent */
+    backdrop-filter: blur(10px); /* Soft blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 2rem;
+    padding: 3rem;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    width: 100%;
+    max-width: 450px;
+    animation: fadeIn 0.8s ease-out;
 }
 
-/* Transitions for showing weather data */
-#weather-display {
-    transition: opacity 0.5s ease-in-out;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.rounded-4 {
-    border-radius: 1.5rem !important;
+.temp-text {
+    font-size: 5rem;
+    font-weight: 800;
+    letter-spacing: -2px;
+    background: -webkit-linear-gradient(#333, #777);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.form-control {
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0,0,0,0.05);
 }
